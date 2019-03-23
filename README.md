@@ -12,7 +12,8 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 # Contents
 
 idf.py
-:   Python script for reading precipitation data, identifying rainfall events, and computing/plotting the IDF curve
+
+- Python script for reading precipitation data, identifying rainfall events, and computing/plotting the IDF curve
 
 # Changelog
 
