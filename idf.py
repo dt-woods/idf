@@ -2,9 +2,9 @@
 #
 # idf.py
 #
-# VERSION: 0.3.0-dev
+# VERSION: 0.3.1-dev
 #
-# LAST EDIT: 2019-03-22
+# LAST EDIT: 2019-03-23
 #
 ###############################################################################
 # PUBLIC DOMAIN NOTICE                                                        #
@@ -36,7 +36,17 @@ import os.path
 
 import numpy
 import scipy.stats
-import matplotlib.pyplot as plt
+import matplotlib
+
+# Address issues with backend: (source: Rolf of Saxony on stackoverflow)
+for gui in matplotlib.rcsetup.interactive_bk:
+    try:
+        matplotlib.use(gui,warn=False, force=True)
+        from matplotlib import pyplot as plt
+        break
+    except:
+        continue
+print("Using:",matplotlib.get_backend())
 
 
 ###############################################################################
@@ -65,7 +75,7 @@ def make_plot(mat, dur, lab):
 
     ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
                ncol=6, mode="expand", borderaxespad=0., fontsize=12)
-    plt.xlim([1e1, 1e4])
+    plt.xlim([5e0, 1.5e3])
     plt.show()
 
 
@@ -290,7 +300,7 @@ class PrecipEvent:
 if __name__ == '__main__':
     # Read precip data:
     user_dir = os.path.expanduser("~")
-    base_dir = os.path.join(user_dir, Repositories, personal, idf)
+    base_dir = os.path.join(user_dir, 'Repositories', 'personal', 'idf')
     fname = os.path.join(base_dir, "usgs_rainfall.txt")
 
     if os.path.isfile(fname):
@@ -301,6 +311,7 @@ if __name__ == '__main__':
                        'formats': ('O', 'f4')},
                 delimiter=",",
                 skiprows=1,
+                usecols=(0,1),
                 converters={0: lambda x: string_to_date(x),
                             1: numpy.float}
             )
@@ -445,7 +456,6 @@ if __name__ == '__main__':
 
     maxduration = numpy.array(all_durations).max()
 
-if False:
 
     # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ #
     # IDF ANALYSIS
@@ -454,7 +464,7 @@ if False:
     durations = [5, 15, 30, 60, 120, 180, 720, 1440]
     num_durs = len(durations)
 
-    # Initialize all event durations:
+    # Initialize all event IDF durations and rainfalls:
     for i in range(1, rainevent):
         exec("Event%d.IDFdurations = numpy.array(durations)" % (i))
         exec("Event%d.IDFrainfalls = numpy.zeros(num_durs)" % (i))
@@ -522,6 +532,7 @@ if False:
             # Save the event total:
             exec("all%dMINevents[%d] = eventDmax" % (durations[n], j-1))
 
+
     # ~~~~~~~~~~~~~~~
     # IDF PROBABILITY
     # ~~~~~~~~~~~~~~~
@@ -562,6 +573,7 @@ if False:
         exec(("for k in range(1, len(my%dpdf)):\n"
               "    my%dcpf[k] = my%dcpf[k-1] + my%dpdf[k]\n"
               ) % (durations[d], durations[d], durations[d], durations[d]))
+
 
     # ~~~~~~~~~~~~~~~~~
     # COMPUTE IDF CURVE
