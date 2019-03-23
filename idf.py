@@ -2,7 +2,7 @@
 #
 # idf.py
 #
-# VERSION: 0.3.1-dev
+# VERSION: 0.3.1
 #
 # LAST EDIT: 2019-03-23
 #
@@ -176,7 +176,7 @@ class PrecipEvent:
     """
     Name:     PrecipEvent
     Features: This class handles rain events
-    History:  Version 0.3.0
+    History:  Version 0.3.1
               - updated minimum storm duration to five minutes [19.03.13]
     """
     # \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
