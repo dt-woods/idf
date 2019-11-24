@@ -4,8 +4,8 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 # Repository Details
 
 * STATUS: Active
-* LATEST RELEASE: v.0.3.1
-* LAST UPDATED: 2019-03-22
+* LATEST RELEASE: v.0.4
+* LAST UPDATED: 2019-11-24
 * LICENSE: Public Domain (except where otherwise noted)
 * URL: https://github.com/dt-woods/idf
 
@@ -17,6 +17,10 @@ idf.py
 
 # Changelog
 
+* 2019-11-24: v.0.4
+    - added three new functions: usgs_to_csv, writeout, writeline
+    - removed file path variables (assumes rainfall file is in local dir)
+    - new workflow: reads tab-separated usgs rain gage file, processes to csv, runs idf
 * 2019-03-23: v.0.3.1
 * 2019-03-22: v.0.3.0-dev
 
