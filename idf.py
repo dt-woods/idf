@@ -2,9 +2,9 @@
 #
 # idf.py
 #
-# VERSION: 0.3.1
+# VERSION: 0.4
 #
-# LAST EDIT: 2019-03-23
+# LAST EDIT: 2019-11-24
 #
 ###############################################################################
 # PUBLIC DOMAIN NOTICE                                                        #
@@ -169,6 +169,63 @@ def string_to_date(x):
         return d
 
 
+def usgs_to_csv(filepath):
+    """
+    Name:     usgs_to_csv
+    Inputs:   str, filepath to USGS rainfall data file
+    Outputs:  str, formatted output file path
+    Features: Processes a tab-separated USGS rainfall data file to CSV format
+    Depends:  - writeline
+              - writeout
+    """
+    outfile = None
+    if os.path.isfile(filepath):
+        # Prepare the output file (preserve original)
+        headerline="datetime,rainfall\n"
+        outfile = ''.join([filepath, ".csv"])
+        writeout(outfile, headerline)
+
+        with open(filepath, 'r') as f:
+            for line in f:
+                if line.startswith("U"):
+                    my_items = line.split("\t")
+                    # usgs file should have six columns beginning with 'USGS'
+                    # save only the datetime and rainfall amounts (cols 2&4)
+                    my_data = ','.join((my_items[2], my_items[4])) + '\n'
+                    writeline(outfile, my_data)
+    return outfile
+
+
+def writeline(f, d):
+    """
+    Name:     writeline
+    Input:    - str, file name with path (f)
+              - str, data to be written to file (d)
+    Output:   None
+    Features: Appends an existing file with data string
+    """
+    try:
+        with open(f, 'a') as my_file:
+            my_file.write(d)
+    except:
+        raise IOError("Can not write to output file.")
+
+
+def writeout(f, d):
+    """
+    Name:     writeout
+    Input:    - str, file name with path (f)
+              - str, data to be written to file (d)
+    Output:   None
+    Features: Writes new/overwrites existing file with data string
+    """
+    try:
+        with open(f, 'w') as my_file:
+            my_file.write(d)
+    except:
+        raise IOError("Can not write to output file.")
+
+
 ###############################################################################
 # CLASSES:
 ###############################################################################
@@ -293,15 +350,13 @@ class PrecipEvent:
             self.total_rain = rain_amounts.sum()
 
 
-
 ###############################################################################
 # MAIN:
 ###############################################################################
 if __name__ == '__main__':
-    # Read precip data:
-    user_dir = os.path.expanduser("~")
-    base_dir = os.path.join(user_dir, 'Repositories', 'personal', 'idf')
-    fname = os.path.join(base_dir, "usgs_rainfall.txt")
+    # Assume text file is in local directory (same as script)
+    usgs_file = "nwis.waterdata.usgs.gov"
+    fname = usgs_to_csv(usgs_file)
 
     if os.path.isfile(fname):
         try:
