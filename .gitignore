@@ -42,3 +42,6 @@ venv.bak/
 
 # mkdocs documentation
 /site
+
+# data files
+*.usgs.gov*
