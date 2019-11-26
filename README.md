@@ -32,8 +32,8 @@ idf.py
 
 This script was tested using Python 3.6.7 and requires the installation of the following third-party packages (version numbers have been successfully tested).
 
-* numpy (1.16.2)
-* scipy (1.2.1)
+* numpy (1.16.2; 1.17.4)
+* scipy (1.2.1; 1.3.3)
 * matplotlib (3.0.3)
 
 ## Windows
