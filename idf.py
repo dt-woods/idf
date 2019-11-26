@@ -2,9 +2,9 @@
 #
 # idf.py
 #
-# VERSION: 0.4
+# VERSION: 0.4.1
 #
-# LAST EDIT: 2019-11-24
+# LAST EDIT: 2019-11-25
 #
 ###############################################################################
 # PUBLIC DOMAIN NOTICE                                                        #
@@ -41,7 +41,7 @@ import matplotlib
 # Address issues with backend: (source: Rolf of Saxony on stackoverflow)
 for gui in matplotlib.rcsetup.interactive_bk:
     try:
-        matplotlib.use(gui,warn=False, force=True)
+        matplotlib.use(gui, warn=False, force=True)
         from matplotlib import pyplot as plt
         break
     except:
@@ -52,12 +52,13 @@ print("Using:",matplotlib.get_backend())
 ###############################################################################
 # FUNCTIONS:
 ###############################################################################
-def make_plot(mat, dur, lab):
+def make_plot(mat, dur, lab, to_save=False):
     """
     Name:     make_plot
     Input:    - numpy.ndarray, IDF matrix (mat)
               - numpy.ndarray, durations (dur)
               - list, labels (lab)
+              - bool, save figure to file (to_save)
     Output:   None
     Features: Creates a plot of IDF
     """
@@ -76,7 +77,11 @@ def make_plot(mat, dur, lab):
     ax1.legend(bbox_to_anchor=(0., 1.02, 1., .102), loc=3,
                ncol=6, mode="expand", borderaxespad=0., fontsize=12)
     plt.xlim([5e0, 1.5e3])
-    plt.show()
+
+    if to_save:
+        fig.savefig('idf.png')
+    else:
+        plt.show()
 
 
 def make_regular_ts(x):
@@ -169,31 +174,33 @@ def string_to_date(x):
         return d
 
 
-def usgs_to_csv(filepath):
+def usgs_to_csv(input_file, output_file):
     """
     Name:     usgs_to_csv
-    Inputs:   str, filepath to USGS rainfall data file
-    Outputs:  str, formatted output file path
+    Inputs:   - str, USGS rainfall file (input_path)
+              - str, file to save output (output_path)
+    Outputs:  None
     Features: Processes a tab-separated USGS rainfall data file to CSV format
     Depends:  - writeline
               - writeout
     """
-    outfile = None
-    if os.path.isfile(filepath):
+    if os.path.isfile(input_path):
         # Prepare the output file (preserve original)
         headerline="datetime,rainfall\n"
-        outfile = ''.join([filepath, ".csv"])
-        writeout(outfile, headerline)
+        if os.path.isfile(output_file):
+            print("Warning: Overwriting file %s" % (output_file))
+        writeout(output_file, headerline)
 
-        with open(filepath, 'r') as f:
+        with open(input_file, 'r') as f:
             for line in f:
                 if line.startswith("U"):
                     my_items = line.split("\t")
                     # usgs file should have six columns beginning with 'USGS'
                     # save only the datetime and rainfall amounts (cols 2&4)
                     my_data = ','.join((my_items[2], my_items[4])) + '\n'
-                    writeline(outfile, my_data)
-    return outfile
+                    writeline(output_file, my_data)
+    else:
+        print("Warning: Could not find input file %s" % (input_file))
 
 
 def writeline(f, d):
@@ -354,14 +361,21 @@ class PrecipEvent:
 # MAIN:
 ###############################################################################
 if __name__ == '__main__':
+    # Set to False to supress print statements
+    verbose = False
+
     # Assume text file is in local directory (same as script)
     usgs_file = "nwis.waterdata.usgs.gov"
-    fname = usgs_to_csv(usgs_file)
+    out_file = "".join((usgs_file, ".csv"))
 
-    if os.path.isfile(fname):
+    # Format USGS data file (if necessary)
+    if not os.path.isfile(out_file):
+        usgs_to_csv(usgs_file, out_file)
+
+    if os.path.isfile(out_file):
         try:
             temp = numpy.loadtxt(
-                fname,
+                out_file,
                 dtype={'names': ('timestamps', 'rain'),
                        'formats': ('O', 'f4')},
                 delimiter=",",
@@ -375,10 +389,7 @@ if __name__ == '__main__':
     else:
         raise IOError("Could not find input file. Check filename and path.")
 
-    # Verbose mode
-    verbose = True
-
-    # Make data into a regular time series:
+    # Make data into a regular time series (if necessary):
     # data = make_regular_ts(temp)
     data = numpy.copy(temp)
 
@@ -668,4 +679,4 @@ if __name__ == '__main__':
     # ~~~~~~~~~~~~~~
     my_labels = [(str(i) + "-yr") for i in myfreqT]
     durations = numpy.array(durations)
-    make_plot(idf, durations, my_labels)
+    make_plot(idf, durations, my_labels, True)

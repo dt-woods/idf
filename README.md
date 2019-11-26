@@ -4,8 +4,8 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 # Repository Details
 
 * STATUS: Active
-* LATEST RELEASE: v.0.4
-* LAST UPDATED: 2019-11-24
+* LATEST RELEASE: v.0.4.1
+* LAST UPDATED: 2019-11-25
 * LICENSE: Public Domain (except where otherwise noted)
 * URL: https://github.com/dt-woods/idf
 
@@ -17,6 +17,10 @@ idf.py
 
 # Changelog
 
+* 2019-11-25: v0.4.1
+    - added check for formatted csv to avoid running conversion twice
+    - changed usgs_to_csv to accept two string arguments (input/output file names) and return nothing
+    - added boolean argument to make_plot for saving figure to PNG
 * 2019-11-24: v.0.4
     - added three new functions: usgs_to_csv, writeout, writeline
     - removed file path variables (assumes rainfall file is in local dir)
