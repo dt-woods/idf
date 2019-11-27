@@ -2,9 +2,9 @@
 #
 # idf.py
 #
-# VERSION: 0.4.1
+# VERSION: 0.4.2
 #
-# LAST EDIT: 2019-11-25
+# LAST EDIT: 2019-11-27
 #
 ###############################################################################
 # PUBLIC DOMAIN NOTICE                                                        #
@@ -79,7 +79,14 @@ def make_plot(mat, dur, lab, to_save=False):
     plt.xlim([5e0, 1.5e3])
 
     if to_save:
-        fig.savefig('idf.png')
+        my_date = datetime.datetime.today()
+        fig_file = "idf_%s-%s%s%s.png" % (
+            my_date.date(),
+            my_date.hour,
+            my_date.minute,
+            my_date.second
+            )
+        fig.savefig(fig_file)
     else:
         plt.show()
 
@@ -131,6 +138,7 @@ def make_regular_ts(x):
                 ts_curr = ts_temp
 
     # Regroup data into numpy array:
+    my_data = numpy.array([])
     for i in range(len(ts_data)):
         var_params = (ts_time[i], ts_data[i])
         if i == 0:
@@ -177,14 +185,14 @@ def string_to_date(x):
 def usgs_to_csv(input_file, output_file):
     """
     Name:     usgs_to_csv
-    Inputs:   - str, USGS rainfall file (input_path)
-              - str, file to save output (output_path)
+    Inputs:   - str, USGS rainfall file (input_file)
+              - str, file to save output (output_file)
     Outputs:  None
     Features: Processes a tab-separated USGS rainfall data file to CSV format
     Depends:  - writeline
               - writeout
     """
-    if os.path.isfile(input_path):
+    if os.path.isfile(input_file):
         # Prepare the output file (preserve original)
         headerline="datetime,rainfall\n"
         if os.path.isfile(output_file):
@@ -361,21 +369,27 @@ class PrecipEvent:
 # MAIN:
 ###############################################################################
 if __name__ == '__main__':
-    # Set to False to supress print statements
-    verbose = False
+    import argparse
 
-    # Assume text file is in local directory (same as script)
-    usgs_file = "nwis.waterdata.usgs.gov"
-    out_file = "".join((usgs_file, ".csv"))
+    p = argparse.ArgumentParser(description="IDF.py - Calculate IDF curves from rainfall data.")
+    p.add_argument("file", help="input rainfall file; format should be two-column (datetime and rainfall amount) comma-separated plain text")
+    p.add_argument("--usgs", action='store_true', help="input file format is based on USGS raingage station; the script will format the file for you")
+    p.add_argument("--make_regular", action="store_true", help="make regular irregular time stamped rainfall.")
+    p.add_argument("--save_plot", action="store_true", help="save IDF curve to PNG file")
+    p.add_argument("--verbose", action="store_true", help="print out all rainfall events")
+    args = p.parse_args()
 
-    # Format USGS data file (if necessary)
-    if not os.path.isfile(out_file):
-        usgs_to_csv(usgs_file, out_file)
+    rain_file = args.file
 
-    if os.path.isfile(out_file):
+    # If USGS raingage file, convert it:
+    if args.usgs:
+        rain_file = "".join([args.file, ".csv"])
+        usgs_to_csv(args.file, rain_file)
+
+    if os.path.isfile(rain_file):
         try:
             temp = numpy.loadtxt(
-                out_file,
+                rain_file,
                 dtype={'names': ('timestamps', 'rain'),
                        'formats': ('O', 'f4')},
                 delimiter=",",
@@ -385,13 +399,16 @@ if __name__ == '__main__':
                             1: numpy.float}
             )
         except:
-            raise IOError("Could not read the input file. Check your format")
+            raise IOError("Could not read the input file. Check your format.")
     else:
         raise IOError("Could not find input file. Check filename and path.")
 
     # Make data into a regular time series (if necessary):
-    # data = make_regular_ts(temp)
-    data = numpy.copy(temp)
+    data = None
+    if args.make_regular:
+        data = make_regular_ts(temp)
+    else:
+        data = temp
 
     # Define total number of lines read:
     numtotal = data.shape[0]
@@ -417,7 +434,7 @@ if __name__ == '__main__':
             if delta_t <= mit:
                 # Found a short break in the storm; still in previous event:
                 rainevent -= 1
-                if verbose:
+                if args.verbose:
                     print("Still in event %d: %s, last heard %0.3f hrs" % (
                         rainevent, stormstart, delta_t))
 
@@ -460,7 +477,7 @@ if __name__ == '__main__':
                 rainevent += 1
 
             else:
-                if verbose:
+                if args.verbose:
                     print("Start rain event %d: %s, last heard %0.3f hrs" % (
                         rainevent, stormstart, delta_t))
 
@@ -509,7 +526,7 @@ if __name__ == '__main__':
         exec("Event%d.calc_total_rain()" % (i))
         exec("Event%d.calc_duration()" % (i))
         exec("all_durations.append(Event%d.duration)" % (i))
-        if verbose:
+        if args.verbose:
             print(
                 "%02d %s -- %s  (%6.2f hours); %6.2f inches" % (
                     i,
@@ -679,4 +696,4 @@ if __name__ == '__main__':
     # ~~~~~~~~~~~~~~
     my_labels = [(str(i) + "-yr") for i in myfreqT]
     durations = numpy.array(durations)
-    make_plot(idf, durations, my_labels, True)
+    make_plot(idf, durations, my_labels, args.save_plot)

@@ -4,8 +4,8 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 # Repository Details
 
 * STATUS: Active
-* LATEST RELEASE: v.0.4.1
-* LAST UPDATED: 2019-11-25
+* LATEST RELEASE: v.0.4.2
+* LAST UPDATED: 2019-11-27
 * LICENSE: Public Domain (except where otherwise noted)
 * URL: https://github.com/dt-woods/idf
 
@@ -15,8 +15,97 @@ idf.py
 
 - Python script for reading precipitation data, identifying rainfall events, and computing/plotting the IDF curve
 
+# Rainfall Data
+This script reads one of two types of rainfall data: USGS raingage tab-separated plain text file or a two-column comma-separated plain text file.
+
+USGS Raingage Data
+------------------
+EXAMPLE DATA
+
+* URL: https://waterdata.usgs.gov/nc/nwis/inventory/?site_no=354057080362545
+* description: Contains 5-minute resolution rainfall data in CSV format for USGS rain gage at RO-149 PIEDMONT RS 1 NR BARBER, NC
+* USGS site: 354057080362545
+* Retrieved: 2019-04-10
+* Parameter: Precipitation, total, inches
+* Date range: 2009-10-01 01:00 EDT to 2019-04-10 09:55 EDT
+* Rows of data: 960109
+
+DATA ACCESS
+
+* Browse to URL
+* Click Current / Historical Observations
+* Check 00045 Precipitation
+* Output format: Tab-separated
+* Begin date: 2009-10-01
+* End date: 2019-04-10
+* Click Go
+* Right-click on page: Save page as "nwis.waterdata.usgs.gov"
+
+DATA FORMAT
+
+```
+# ---------------------------------- WARNING ----------------------------------------
+# Some of the data that you have obtained from this U.S. Geological Survey database
+# may not have received Director's approval. Any such data values are qualified
+# as provisional and are subject to revision. Provisional data are released on the
+# condition that neither the USGS nor the United States Government may be held liable
+# for any damages resulting from its use.
+#
+# Additional info: https://help.waterdata.usgs.gov/policies/provisional-data-statement
+#
+# File-format description:  https://help.waterdata.usgs.gov/faq/about-tab-delimited-output
+# Automated-retrieval info: https://help.waterdata.usgs.gov/faq/automated-retrievals
+#
+# Contact:   gs-w_support_nwisweb@usgs.gov
+# retrieved: 2019-11-24 12:55:21 EST       (nadww01)
+#
+# Data for the following 1 site(s) are contained in this file
+#    USGS 354057080362545 RAINGAGE AT RO-149 (NC193) PIEDMONT RS 1 NR BARBER
+# -----------------------------------------------------------------------------------
+#
+# Data provided for site 354057080362545
+#            TS   parameter     Description
+#         90643       00045     Precipitation, total, inches
+#
+# Data-value qualification codes included in this output:
+#     A  Approved for publication -- Processing and review completed.
+#
+agency_cd	site_no	datetime	tz_cd	90643_00045	90643_00045_cd
+5s	15s	20d	6s	14n	10s
+USGS	354057080362545	2010-10-01 00:00	EDT	0.00	A
+USGS	354057080362545	2010-10-01 00:05	EDT	0.00	A
+USGS	354057080362545	2010-10-01 00:10	EDT	0.00	A
+...
+```
+
+Use the `--usgs` flag to auto-format this file.
+
+Two-Column Plain Text Format
+----------------------------
+You may create your own rainfall data file, so long as it meets the formatting guidelines of:
+
+* single column header (e.g., "Datetime,Rainfall")
+* ISO formatted timestamps (i.e., "YYYY-MM-DD HH:MM:SS")
+
+EXAMPLE DATA
+
+```
+datetime,precip_inches
+2019-02-06 13:00,0
+2019-02-06 13:05,0
+2019-02-06 13:10,0.1
+...
+```
+
+If your rainfall data comes from a personal weather station or other source that has irregular time stamp intervals, you may use the flag `--make_regular` to calculate a regular time series (if needed).
+
+
 # Changelog
 
+* 2019-11-27: v0.4.2
+    - fixed typo in usgs_to_csv
+    - fixed potential problem in make_regular_ts with variable `my_data`
+    - added command line arguments for easier workflows with other rainfall files
 * 2019-11-25: v0.4.1
     - added check for formatted csv to avoid running conversion twice
     - changed usgs_to_csv to accept two string arguments (input/output file names) and return nothing
