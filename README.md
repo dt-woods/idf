@@ -9,6 +9,28 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 * LICENSE: Public Domain (except where otherwise noted)
 * URL: https://github.com/dt-woods/idf
 
+# Summary
+
+The intensity-duration-frequency (IDF) curve for a given region is often used as a design criteria for hydrologic structures: from rain barrels to dams.
+Computing an IDF curve allows the designer to quickly calculate expected rainfall quantities at different return periods; answering questions such as "What storm characteristics should I expect in the next five or ten years and how much water will it bring?"
+In order to more accurately predict future storm characteristics and their return periods, long-term rainfall observations are critical (>10 years).
+Because different regions will likely have different rainfall characteristics that change over time, a method for quickly computing the IDF curve is advantageous.
+
+This script reads rainfall data, identifies individual rainfall events, calculates each event's duration and intensity, computes the return period probabilities for all storm events, and plots the IDF curve.
+
+Results will be highly dependent on the quality, resolution, and length of the rain data set.
+Some assumptions have been made and can be edited within the code.
+Notably is the minimum inter-event time (MIT), which is set to five (5) hours; this may not be suitable for all regions: consult the literature for advice.
+This script also assumes that storm starting and ending times are immediately before and after they are recorded, which may not be accurate for data sets with long time intervals (e.g., hourly data).
+The durations and the return periods have been hard-coded; if they are not what you need for your analysis, they are clearly identified in the code for IDF Analysis and Computing the IDF Curve; make adjustments as needed.
+
+Please note that this code is not intended for use with designs that are life-saving or life-threatening.
+
+Although all reasonable efforts have been taken to ensure the accuracy and reliability of this code, the author does not and cannot warrant the performance or results that may be obtained by its use.
+The author disclaims all warranties, express or implied, including warranties of performance, merchantability or fitness for any particular purpose.
+
+For comments or concerns, please use GitHub's Issues.
+
 # Contents
 
 idf.py
