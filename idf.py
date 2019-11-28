@@ -2,9 +2,9 @@
 #
 # idf.py
 #
-# VERSION: 0.4.2
+# VERSION: 0.4.3
 #
-# LAST EDIT: 2019-11-27
+# LAST EDIT: 2019-11-28
 #
 ###############################################################################
 # PUBLIC DOMAIN NOTICE                                                        #
@@ -379,12 +379,12 @@ if __name__ == '__main__':
     p.add_argument("--verbose", action="store_true", help="print out all rainfall events")
     args = p.parse_args()
 
-    rain_file = args.file
-
     # If USGS raingage file, convert it:
     if args.usgs:
-        rain_file = "".join([args.file, ".csv"])
+        rain_file = "".join([os.path.splitext(args.file)[0], ".csv"])
         usgs_to_csv(args.file, rain_file)
+    else:
+        rain_file = args.file
 
     if os.path.isfile(rain_file):
         try:

@@ -4,8 +4,8 @@ Rainfall intensity duration frequency (IDF) curve calculation and plotting
 # Repository Details
 
 * STATUS: Active
-* LATEST RELEASE: v.0.4.2
-* LAST UPDATED: 2019-11-27
+* LATEST RELEASE: v.0.4.3
+* LAST UPDATED: 2019-11-28
 * LICENSE: Public Domain (except where otherwise noted)
 * URL: https://github.com/dt-woods/idf
 
@@ -158,6 +158,8 @@ If your rainfall data comes from a personal weather station or other source that
 
 # Changelog
 
+* 2019-11-28: v0.4.3
+    - changed usgs_to_csv rain_file naming (use os.path.splitext)
 * 2019-11-27: v0.4.2
     - fixed typo in usgs_to_csv
     - fixed potential problem in make_regular_ts with variable `my_data`
