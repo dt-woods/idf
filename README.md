@@ -15,7 +15,41 @@ idf.py
 
 - Python script for reading precipitation data, identifying rainfall events, and computing/plotting the IDF curve
 
-# Rainfall Data
+```
+usage: idf.py [-h] [--usgs] [--make_regular] [--save_plot] [--verbose] file
+
+IDF.py - Calculate IDF curves from rainfall data.
+
+positional arguments:
+  file            input rainfall file; format should be two-column (datetime
+                  and rainfall amount) comma-separated plain text
+
+optional arguments:
+  -h, --help      show this help message and exit
+  --usgs          input file format is based on USGS raingage station; the
+                  script will format the file for you
+  --make_regular  make regular irregular time stamped rainfall.
+  --save_plot     save IDF curve to PNG file
+  --verbose       print out all rainfall events
+```
+
+**EXAMPLE 1 - USGS RAINGAGE DATA**
+
+Converts tab-separated file to csv and saves the IDF curve as a PNG image file.
+
+```
+python idf.py --usgs --save_plot nwis.waterdata.usgs.gov
+```
+
+**EXAMPLE 2 - TWO-COLUMN PLAIN TEXT FORMAT**
+
+Plots the IDF curve.
+
+```
+python idf.py rainfall.txt
+```
+
+# Data
 This script reads one of two types of rainfall data: USGS raingage tab-separated plain text file or a two-column comma-separated plain text file.
 
 USGS Raingage Data
