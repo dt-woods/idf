@@ -140,7 +140,7 @@ Two-Column Plain Text Format
 ----------------------------
 You may create your own rainfall data file, so long as it meets the formatting guidelines of:
 
-* single column header (e.g., "Datetime,Rainfall")
+* single header row (e.g., "Datetime,Rainfall")
 * ISO formatted timestamps (i.e., "YYYY-MM-DD HH:MM:SS")
 
 EXAMPLE DATA
