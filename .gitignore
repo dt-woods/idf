@@ -45,3 +45,6 @@ venv.bak/
 
 # data files
 *.usgs.gov*
+*.txt
+*.csv
+*.png
